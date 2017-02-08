@@ -75,7 +75,7 @@ class LoadToDatabase(luigi.Task):
     def run(self):
         with self.input().open('r') as fin:
             reader = csv.reader(fin)
-            rows = [(self.book_url, i, j) for (i, j) in list(reader)]
+            rows = [(self.book_url, w, int(c)) for (w, c) in list(reader)]
 
         conn = self._create_db()
         conn.executemany(
