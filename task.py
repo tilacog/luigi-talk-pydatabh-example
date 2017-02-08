@@ -90,7 +90,11 @@ class LoadToDatabase(luigi.Task):
         conn = sqlite3.connect(self.output().path)
 
         # create table
-        conn.execute('create table wordcount (book_url, word, count);')
+        try:
+            conn.execute('create table wordcount (book_url, word, count);')
+        except sqlite3.OperationalError as e:
+            # table already exists
+            pass
 
         return conn
 
