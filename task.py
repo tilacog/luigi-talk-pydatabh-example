@@ -138,5 +138,16 @@ class SqliteRowTarget(luigi.Target):
         return True
 
 
+class AllBooks(luigi.WrapperTask):
+    book_list = luigi.Parameter(default='book-list.txt')
+
+    def requires(self):
+        with open(self.book_list) as f:
+            urls = [url.strip() for url in f]
+
+        for url in urls:
+            yield LoadToDatabase(book_url=url)
+
+
 if __name__ == '__main__':
     luigi.run()
