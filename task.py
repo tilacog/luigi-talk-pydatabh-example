@@ -51,16 +51,21 @@ class LoadToDatabase(luigi.Task):
         return CountWords(book_url=self.book_url)
 
     def output(self):
-        return luigi.LocalTarget('books-word-count.sqlite3')
+        return SqliteRowTarget(
+            'db.sqlite3',
+            table='wordcount',
+            column='book_url',
+            value=self.book_url,
+        )
 
     def run(self):
         with self.input().open('r') as fin:
             reader = csv.reader(fin)
-            rows = list(reader)
+            rows = [(self.book_url, i, j) for (i, j) in list(reader)]
 
         conn = self._create_db()
         conn.executemany(
-            'insert into wordcount (word, count) values (?, ?)',
+            'insert into wordcount (book_url, word, count) values (?, ?, ?)',
             rows
         )
 
@@ -71,7 +76,7 @@ class LoadToDatabase(luigi.Task):
         conn = sqlite3.connect(self.output().path)
 
         # create table
-        conn.execute('create table wordcount (word, count);')
+        conn.execute('create table wordcount (book_url, word, count);')
 
         return conn
 
