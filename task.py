@@ -27,7 +27,7 @@ class CountWords(luigi.Task):
     def requires(self):
         return DownloadBook(book_url=self.book_url)
 
-    def output(sellf):
+    def output(self):
         return luigi.LocalTarget('word-count.csv')
 
     def run(self):
