@@ -22,5 +22,5 @@ python task.py LoadToDatabase --book-url="http://www.gutenberg.org/cache/epub/52
 
 ```
 $ chmod +x luigi_cmd
-$ luigi_cmd.sh
+$ ./luigi_cmd.sh
 ```
