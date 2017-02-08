@@ -76,5 +76,48 @@ class LoadToDatabase(luigi.Task):
         return conn
 
 
+class SqliteRowTarget(luigi.Target):
+    """
+    Simple target for Sqlite3 databases.
+    """
+    def __init__(self, path, table, column, value):
+
+        self.path = path
+        self.table = table
+        self.column = column
+        self.value = value
+
+    def exists(self):
+        """
+        Checks if a given record exists by trying to select it.
+        """
+
+        #  connect to database
+        try:
+            conn = sqlite3.connect(self.path)
+        except:
+            return False
+
+        # query template
+        q = """
+            select {col} from {table}
+            where {col} = ?
+            limit 1;
+        """.format(col=self.column, table=self.table)
+
+        # fetch records
+        try:
+            cur = conn.cursor()
+            cur.execute(q, (self.value,))
+
+            if not cur.fetchone():
+                return False
+
+        except sqlite3.OperationalError:
+            return False
+
+        return True
+
+
 if __name__ == '__main__':
     luigi.run()
