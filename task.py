@@ -19,21 +19,17 @@ class DownloadBook(luigi.Task):
     book_url = luigi.Parameter()
 
     def output(self):
-
         # suboptimal way to use url as a filename
         encoded_name = hash_filename(self.book_url) + '.txt'
-
         return luigi.LocalTarget(encoded_name)
 
     def run(self):
-
         request = requests.get(self.book_url)
         with self.output().open('wb') as fout:
             fout.write(request.content.decode('utf-8'))
 
 
 class CountWords(luigi.Task):
-
     book_url = luigi.Parameter()
 
     def requires(self):
@@ -41,7 +37,7 @@ class CountWords(luigi.Task):
 
     def output(self):
         # suboptimal way to use url as a filename
-        encoded_name = hash_filename(self.book_url) + '-wc.txt'
+        encoded_name = hash_filename(self.book_url) + '-wc.csv'
         return luigi.LocalTarget(encoded_name)
 
     def run(self):
